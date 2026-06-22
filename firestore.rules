@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Default Deny Safety Net To Protect Unspecified Paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Help Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Products Collection: Publicly browsable catalog of available GAS modules
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Only manageable through Server/Admin SDK
+    }
+    
+    // Users Collection: Individual profile registries for purchase & support linkage
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasAll(['uid', 'name', 'email', 'whatsapp', 'createdAt'])
+                    && request.resource.data.uid == userId
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.email is string
+                    && request.resource.data.whatsapp is string;
+                    
+      allow update: if isOwner(userId)
+                    && request.resource.data.keys().hasAll(['uid', 'name', 'email', 'whatsapp', 'createdAt'])
+                    && request.resource.data.uid == userId
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 100
+                    // Immortality of key profile markers
+                    && request.resource.data.email == resource.data.email
+                    && request.resource.data.createdAt == resource.data.createdAt;
+                    
+      allow delete: if false; // Profiles are permanent registry
+    }
+    
+    // Orders Database: Transaction histories linked to authenticated buyers
+    match /orders/{orderId} {
+      // Allow create: Only if the user is authenticated and records their own uid of the transaction
+      allow create: if isSignedIn()
+                    && request.resource.data.keys().hasAll(['orderId', 'razorpayPaymentId', 'productId', 'productName', 'customerEmail', 'customerName', 'customerPhone', 'userId', 'amount', 'currency', 'status', 'createdAt'])
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.razorpayPaymentId is string
+                    && request.resource.data.productId is string
+                    && request.resource.data.amount is number
+                    && request.resource.data.status == 'paid';
+      
+      // Allow read/list: Securely partitioned so users can only list and read their own successful order histories!
+      allow read, list: if isSignedIn()
+                        && resource.data.userId == request.auth.uid;
+                        
+      allow update, delete: if false; // Logged transactions are immutable
+    }
+    
+    // Leads Collection: Public-facing free landing page downloads
+    match /leads/{leadId} {
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'whatsapp', 'source', 'createdAt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string
+                    && request.resource.data.whatsapp is string;
+                    
+      // Read access is disabled to prevent database scraper harvesters
+      allow read, update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Seeded products available for purchase on Suraj Automation store",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique product ID" },
+        "name": { "type": "string", "description": "Product name" },
+        "category": { "type": "string", "description": "Category group" },
+        "tagline": { "type": "string", "description": "One-line catchy tagline" },
+        "description": { "type": "string", "description": "Detailed marketing copy description" },
+        "price": { "type": "number", "description": "Actual discounted price in INR" },
+        "mrp": { "type": "number", "description": "Original printed maximum retail price in INR" },
+        "currency": { "type": "string", "description": "Currency code (default INR)" },
+        "badge": { "type": "string", "description": "UI highlighting badge (e.g. FEATURED)" },
+        "icon": { "type": "string", "description": "Product emoji symbol representation" },
+        "features": {
+          "type": "array",
+          "description": "List of core features or modules included"
+        },
+        "deliverables": {
+          "type": "array",
+          "description": "Tangible source code files, boards, and setup assets included"
+        },
+        "featured": { "type": "boolean", "description": "True if featured on the page grid" },
+        "active": { "type": "boolean", "description": "True if actively published" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "category", "tagline", "description", "price", "mrp", "currency", "features", "deliverables"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Represents a successful checkout transaction paid through Razorpay",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "description": "Unique local tracking order ID" },
+        "razorpayPaymentId": { "type": "string", "description": "Razorpay reference payment ID" },
+        "razorpayOrderId": { "type": "string", "description": "Razorpay order database reference ID" },
+        "razorpaySignature": { "type": "string", "description": "Verification check signature" },
+        "productId": { "type": "string", "description": "ID of purchased item" },
+        "productName": { "type": "string", "description": "Name of purchased item" },
+        "customerName": { "type": "string", "description": "Full legal name of the card holder" },
+        "customerEmail": { "type": "string", "description": "Validated checkout contact email" },
+        "customerPhone": { "type": "string", "description": "WhatsApp contact number" },
+        "userId": { "type": "string", "description": "Auth UID of the purchasing user account" },
+        "amount": { "type": "number", "description": "Gross paid in INR" },
+        "currency": { "type": "string", "description": "INR default" },
+        "status": { "type": "string", "enum": ["paid", "pending", "failed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "downloadSent": { "type": "boolean", "description": "Whether automated system emailed link" }
+      },
+      "required": ["razorpayPaymentId", "productId", "productName", "customerEmail", "customerName", "amount", "status", "createdAt", "userId"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered customer accounts for past purchase tracking",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique Firebase Auth user ID" },
+        "name": { "type": "string", "description": "Display name of the user" },
+        "email": { "type": "string", "description": "Valid registration and support email" },
+        "whatsapp": { "type": "string", "description": "WhatsApp number for instant notifications" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "whatsapp", "createdAt"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "Submissions for the free dashboard source document",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name" },
+        "email": { "type": "string", "description": "Email address" },
+        "whatsapp": { "type": "string", "description": "WhatsApp mobile number for dashboard delivery" },
+        "source": { "type": "string", "description": "Lead marketing funnel origin" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "whatsapp", "createdAt"]
+    }
+  },
+  "firestore": {
+    "products/{productId}": {
+      "schema": "Product",
+      "description": "Read-only catalogs of products stored globally"
+    },
+    "orders/{orderId}": {
+      "schema": "Order",
+      "description": "Individual payment transactions placed by authenticated clients"
+    },
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account registry profiles"
+    },
+    "leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Funnel capture of individuals claiming free spreadsheet templates"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Suraj Automation Products",
+  "description": "A high-performance digital products dashboard and e-commerce storefront for Suraj Automation, offering Google-powered business tools and automatic operations for SMBs in India.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,2265 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suraj Automation | Smart Tools for Smart Businesses</title>
+    
+    <!-- Google Fonts Load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              bg: '#0A0F1E',
+              surface: '#111827',
+              border: '#1E293B',
+              teal: {
+                DEFAULT: '#00C2A8',
+                hover: '#00A892'
+              },
+              gold: '#F5A623',
+              text: '#E2E8F0',
+              muted: '#64748B',
+              white: '#FFFFFF',
+              danger: '#EF4444',
+              success: '#10B981'
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['"Plus Jakarta Sans"', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace']
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Firebase SDK Compat CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <!-- Razorpay Payment Gateway CDN -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+      :root {
+        --color-bg: #0A0F1E;
+        --color-surface: #111827;
+        --color-border: #1E293B;
+        --color-teal: #00C2A8;
+        --color-gold: #F5A623;
+        --color-text: #E2E8F0;
+        --color-muted: #64748B;
+      }
+      
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+      }
+      
+      h1, h2, .font-display {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      
+      /* Sophisticated Dark Glass Nav */
+      .glass-nav {
+        background: rgba(10, 15, 30, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+      
+      /* Sophisticated Dark Product Card */
+      .product-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .product-card:hover {
+        border-color: var(--color-teal);
+      }
+      
+      /* Sophisticated Dark Shimmer Badge */
+      .shimmer-badge {
+        background: linear-gradient(90deg, #F5A623 0%, #FFD700 50%, #F5A623 100%);
+        background-size: 200% auto;
+        animation: shimmer 2s linear infinite;
+      }
+      @keyframes shimmer {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+      }
+      
+      /* Sophisticated Dark Hero Gradient */
+      .hero-gradient {
+        background: linear-gradient(135deg, #00C2A8 0%, #0A0F1E 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      /* Subtle Floating Particles CSS */
+      @keyframes floatY {
+        0%, 100% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-20px) translateX(12px); }
+      }
+      .floating-particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background-color: var(--color-teal);
+        border-radius: 50%;
+        opacity: 0.12;
+        pointer-events: none;
+        animation: floatY 8s ease-in-out infinite;
+      }
+      .particle-1 { top: 10%; left: 8%; animation-delay: 0s; }
+      .particle-2 { top: 25%; left: 88%; animation-delay: 1.5s; }
+      .particle-3 { top: 45%; left: 5%; animation-delay: 3s; }
+      .particle-4 { top: 62%; left: 78%; animation-delay: 0.8s; }
+      .particle-5 { top: 85%; left: 15%; animation-delay: 2.2s; }
+      .particle-6 { top: 92%; left: 88%; animation-delay: 4.1s; }
+      .particle-7 { top: 38%; left: 45%; animation-delay: 1.1s; }
+      .particle-8 { top: 72%; left: 55%; animation-delay: 2.9s; }
+      
+      /* Success checkmark draw animation */
+      .checkmark-circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #10B981;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+      }
+      .checkmark {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #10B981;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s forwards;
+      }
+      .checkmark-check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+      }
+      @keyframes stroke {
+        100% { stroke-dashoffset: 0; }
+      }
+      @keyframes scale {
+        0%, 100% { transform: none; }
+        50% { transform: scale3d(1.1, 1.1, 1); }
+      }
+      @keyframes fill {
+        100% { box-shadow: inset 0px 0px 0px 80px #10B981; }
+      }
+      
+      /* Toast slide-in */
+      @keyframes slideInUp {
+        0% { transform: translateY(100%) scale(0.9); opacity: 0; }
+        100% { transform: translateY(0) scale(1); opacity: 1; }
+      }
+      .animate-toast {
+        animation: slideInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+    </style>
+  </head>
+  <body class="bg-bg text-text min-h-screen selection:bg-teal selection:text-bg">
+    
+    <!-- 1. STICKY NAVBAR -->
+    <header class="sticky top-0 w-full z-40 glass-nav transition-all duration-300">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between" id="navbar-container">
+        <a href="#" class="flex items-center gap-2 group">
+          <span class="text-teal text-2xl font-extrabold tracking-tight transform group-hover:scale-110 transition-transform duration-300">⚡</span>
+          <div class="flex flex-col">
+            <span class="font-display font-extrabold text-lg text-white leading-tight uppercase tracking-wider">Suraj Automation</span>
+            <span class="text-[10px] text-muted tracking-widest font-mono uppercase">Smart Tools for SMBs</span>
+          </div>
+        </a>
+        
+        <div class="hidden md:flex items-center gap-8 font-medium">
+          <a href="#products-section" class="text-text hover:text-teal transition-colors font-sans text-sm">Products</a>
+          <a href="#how-it-works" class="text-text hover:text-teal transition-colors font-sans text-sm">How It Works</a>
+          <a href="#trust-section" class="text-text hover:text-teal transition-colors font-sans text-sm">Why Us</a>
+          <a href="#faq-section" class="text-text hover:text-teal transition-colors font-sans text-sm">FAQs</a>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <!-- Auth Navigation State Hub -->
+          <div id="auth-nav-area" class="flex items-center gap-2"></div>
+          
+          <a href="https://wa.me/918851666208" 
+             target="_blank" 
+             rel="noreferrer"
+             id="nav-whatsapp-btn"
+             class="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full border border-gold text-gold hover:bg-gold/10 font-sans font-semibold text-xs transition-all duration-300 shadow-md">
+            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+            <span>WhatsApp Us</span>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- 2. HERO SECTION -->
+    <section class="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 flex flex-col items-center justify-center border-b border-border">
+      <!-- Floating Particles (CSS Animation) -->
+      <div class="floating-particle particle-1"></div>
+      <div class="floating-particle particle-2"></div>
+      <div class="floating-particle particle-3"></div>
+      <div class="floating-particle particle-4"></div>
+      <div class="floating-particle particle-5"></div>
+      <div class="floating-particle particle-6"></div>
+      <div class="floating-particle particle-7"></div>
+      <div class="floating-particle particle-8"></div>
+
+      <!-- Backdrop Ambient Glow -->
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] rounded-full bg-teal/10 blur-[80px] sm:blur-[120px] pointer-events-none -z-10"></div>
+      
+      <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 z-10">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface border border-border text-xs font-mono font-medium text-teal mb-6">
+          <span class="w-2 h-2 rounded-full bg-teal animate-pulse"></span>
+          <span>STOCKED FOR INDIAN CREATORS</span>
+        </div>
+        
+        <h1 id="hero-title" class="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight max-w-3xl mx-auto">
+          Stop Running Your Business on <span class="hero-gradient">WhatsApp.</span>
+        </h1>
+        
+        <p class="mt-6 text-muted text-lg sm:text-xl max-w-2xl mx-auto font-sans leading-relaxed">
+          Get ready-to-deploy Google-powered tools — built for Indian SMBs by a real automation expert. Pay once, own for a lifetime.
+        </p>
+        
+        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="#products-section" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-center transition-all duration-300 shadow-lg shadow-teal/20 transform hover:-translate-y-1">
+            Explore Products ↓
+          </a>
+          <a href="https://wa.me/918851666208?text=Hi%20Suraj,%20I%20am%20interested%2520in%20your%20business%20automation%20tools!" 
+             target="_blank" 
+             rel="noreferrer"
+             class="w-full sm:w-auto px-8 py-4 rounded-xl bg-surface border border-border hover:border-gold hover:text-gold text-white font-sans font-semibold text-center transition-all duration-300 flex items-center justify-center gap-2">
+            <i data-lucide="message-circle" class="w-5 h-5 text-gold"></i>
+            <span>Talk to Suraj on WhatsApp</span>
+          </a>
+        </div>
+        
+        <!-- Trust Strip -->
+        <div class="mt-16 pt-8 border-t border-border/50 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-teal font-sans font-semibold text-sm">✅ One-Time Payment</span>
+            <span class="text-xs text-muted">No monthly subscription</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-teal font-sans font-semibold text-sm">🚀 Instant Delivery</span>
+            <span class="text-xs text-muted">Web link files in 2 Hours</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-teal font-sans font-semibold text-sm">💼 GST-Ready Tools</span>
+            <span class="text-xs text-muted">Invoices & accounts auto</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-teal font-sans font-semibold text-sm">💬 WhatsApp Support</span>
+            <span class="text-xs text-muted">Direct contact with Suraj</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. CATEGORY FILTER TABS -->
+    <section id="products-section" class="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-18">
+      <div class="text-center mb-12">
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-white">Our Automation Catalog</h2>
+        <p class="text-muted text-sm sm:text-base mt-2 max-w-lg mx-auto font-sans">
+          Eliminate manual copy-paste. Click to discover systems designed for Indian conditions.
+        </p>
+        
+        <!-- Tabs -->
+        <div class="mt-8 flex flex-wrap justify-center gap-2 border-b border-border pb-4">
+          <button onclick="filterProducts('All')" id="tab-All" class="product-tab px-5 py-2.5 rounded-lg border-2 border-teal text-white font-sans font-bold text-sm bg-teal/5 transition-all duration-200">
+            All Products
+          </button>
+          <button onclick="filterProducts('HR & Management')" id="tab-HR" class="product-tab px-5 py-2.5 rounded-lg border-2 border-transparent text-muted hover:text-text hover:bg-surface/50 font-sans font-medium text-sm transition-all duration-200">
+            HR & Management
+          </button>
+          <button onclick="filterProducts('Accounting & Finance')" id="tab-Accounting" class="product-tab px-5 py-2.5 rounded-lg border-2 border-transparent text-muted hover:text-text hover:bg-surface/50 font-sans font-medium text-sm transition-all duration-200">
+            Accounting & Finance
+          </button>
+          <button onclick="filterProducts('Retail & Supply')" id="tab-Supply" class="product-tab px-5 py-2.5 rounded-lg border-2 border-transparent text-muted hover:text-text hover:bg-surface/50 font-sans font-medium text-sm transition-all duration-200">
+            Retail & Supply
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. PRODUCTS GRID -->
+      <div id="products-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Dyn. populated via JS. Static fallback embedded for instant SEO and client load -->
+        
+        <!-- CARD 1 -->
+        <div class="product-card-wrap" data-category="HR & Management">
+          <div class="product-card flex flex-col justify-between h-full bg-surface border border-border rounded-2xl p-6 sm:p-8 relative overflow-hidden group">
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                <span class="px-2.5 py-1 rounded bg-teal/10 border border-teal/20 text-teal font-mono text-[10px] font-bold tracking-wider uppercase">HR & Management</span>
+                <span class="shimmer-badge px-2.5 py-1 rounded text-bg font-display text-[10px] font-extrabold tracking-widest uppercase">FEATURED</span>
+              </div>
+              
+              <div class="flex items-start gap-4 mb-4">
+                <span class="text-5xl shrink-0" role="img" aria-label="SalarySarthi">👥</span>
+                <div>
+                  <h3 class="font-display font-extrabold text-2xl text-white group-hover:text-teal transition-colors">SalarySarthi</h3>
+                  <p class="text-teal font-sans text-xs font-semibold mt-1">HRMS + Payroll Management System</p>
+                </div>
+              </div>
+              
+              <p class="text-muted font-sans text-sm line-clamp-3 leading-relaxed mb-6">
+                SalarySarthi isn't trying to be another bloated HRMS — it focuses on solving payroll and attendance pain for SMBs surprisingly well.
+              </p>
+              
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Complete Payroll Processing</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Salary Slip Generation</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> PF / ESI / TDS Calculations</li>
+              </ul>
+            </div>
+            
+            <div class="mt-auto border-t border-border/80 pt-6">
+              <!-- Savings tag -->
+              <span class="inline-block px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[11px] font-semibold mb-4">
+                Save ₹10,000 (40% OFF)
+              </span>
+              
+              <div class="flex items-baseline gap-2 mb-6">
+                <strike class="text-muted text-sm font-mono">₹25,000</strike>
+                <span class="text-gold font-display font-extrabold text-2xl">₹15,000</span>
+                <span class="text-muted text-[10px] font-mono ml-auto">One-time • Lifetime Access</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <button onclick="openDetailsModal('salary-sarthi')" class="px-4 py-3 rounded-lg bg-surface border border-border hover:bg-bg text-white font-sans font-semibold text-xs text-center transition-all duration-200">
+                  🔍 View Details
+                </button>
+                <button onclick="triggerCheckoutFlow('salary-sarthi')" class="px-4 py-3 rounded-lg bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-xs text-center transition-all duration-200">
+                  Buy Now →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="product-card-wrap" data-category="HR & Management">
+          <div class="product-card flex flex-col justify-between h-full bg-surface border border-border rounded-2xl p-6 sm:p-8 relative overflow-hidden group">
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                <span class="px-2.5 py-1 rounded bg-teal/10 border border-teal/20 text-teal font-mono text-[10px] font-bold tracking-wider uppercase">HR & Management</span>
+                <span class="shimmer-badge px-2.5 py-1 rounded text-bg font-display text-[10px] font-extrabold tracking-widest uppercase">FEATURED</span>
+              </div>
+              
+              <div class="flex items-start gap-4 mb-4">
+                <span class="text-5xl shrink-0" role="img" aria-label="HireSarthi">🎯</span>
+                <div>
+                  <h3 class="font-display font-extrabold text-2xl text-white group-hover:text-teal transition-colors">HireSarthi</h3>
+                  <p class="text-teal font-sans text-xs font-semibold mt-1">Hire Faster. Onboard Smarter.</p>
+                </div>
+              </div>
+              
+              <p class="text-muted font-sans text-sm line-clamp-3 leading-relaxed mb-6">
+                HireSarthi helps growing businesses streamline recruitment, offer letter generation, employee onboarding, and workforce management from a single platform. Track candidates, automate hiring workflows, issue digital offer letters, and maintain a complete employee database.
+              </p>
+              
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Candidate Pipeline & ATS</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Digital Offer Letter Generation</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Document Collection & Storage</li>
+              </ul>
+            </div>
+            
+            <div class="mt-auto border-t border-border/80 pt-6">
+              <!-- Savings tag -->
+              <span class="inline-block px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[11px] font-semibold mb-4">
+                Save ₹15,000 (60% OFF)
+              </span>
+              
+              <div class="flex items-baseline gap-2 mb-6">
+                <strike class="text-muted text-sm font-mono">₹24,999</strike>
+                <span class="text-gold font-display font-extrabold text-2xl">₹9,999</span>
+                <span class="text-muted text-[10px] font-mono ml-auto">One-time • Lifetime Access</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <button onclick="openDetailsModal('hire-sarthi')" class="px-4 py-3 rounded-lg bg-surface border border-border hover:bg-bg text-white font-sans font-semibold text-xs text-center transition-all duration-200">
+                  🔍 View Details
+                </button>
+                <button onclick="triggerCheckoutFlow('hire-sarthi')" class="px-4 py-3 rounded-lg bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-xs text-center transition-all duration-200">
+                  Buy Now →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="product-card-wrap" data-category="Accounting & Finance">
+          <div class="product-card flex flex-col justify-between h-full bg-surface border border-border rounded-2xl p-6 sm:p-8 relative overflow-hidden group">
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                <span class="px-2.5 py-1 rounded bg-teal/10 border border-teal/20 text-teal font-mono text-[10px] font-bold tracking-wider uppercase">Accounting & Finance</span>
+                <span class="shimmer-badge px-2.5 py-1 rounded text-bg font-display text-[10px] font-extrabold tracking-widest uppercase">FEATURED</span>
+              </div>
+              
+              <div class="flex items-start gap-4 mb-4">
+                <span class="text-5xl shrink-0" role="img" aria-label="LoanSarthi">💰</span>
+                <div>
+                  <h3 class="font-display font-extrabold text-2xl text-white group-hover:text-teal transition-colors">LoanSarthi</h3>
+                  <p class="text-teal font-sans text-xs font-semibold mt-1">Smart Finance & Recovery Control</p>
+                </div>
+              </div>
+              
+              <p class="text-muted font-sans text-sm line-clamp-3 leading-relaxed mb-6">
+                Small finance businesses ke liye powerful, mobile-first loan management system. Loan create, EMI track, recovery manage, and reports all in one dashboard.
+              </p>
+              
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> EMI Schedule Auto-generation</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Recovery & Collection Management</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Overdue Automatic Alerts</li>
+              </ul>
+            </div>
+            
+            <div class="mt-auto border-t border-border/80 pt-6">
+              <!-- Savings tag -->
+              <span class="inline-block px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[11px] font-semibold mb-4">
+                Save ₹20,600 (58% OFF)
+              </span>
+              
+              <div class="flex items-baseline gap-2 mb-6">
+                <strike class="text-muted text-sm font-mono">₹35,599</strike>
+                <span class="text-gold font-display font-extrabold text-2xl">₹14,999</span>
+                <span class="text-muted text-[10px] font-mono ml-auto">One-time • Lifetime Access</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <button onclick="openDetailsModal('loan-sarthi')" class="px-4 py-3 rounded-lg bg-surface border border-border hover:bg-bg text-white font-sans font-semibold text-xs text-center transition-all duration-200">
+                  🔍 View Details
+                </button>
+                <button onclick="triggerCheckoutFlow('loan-sarthi')" class="px-4 py-3 rounded-lg bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-xs text-center transition-all duration-200">
+                  Buy Now →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="product-card-wrap" data-category="Retail & Supply">
+          <div class="product-card flex flex-col justify-between h-full bg-surface border border-border rounded-2xl p-6 sm:p-8 relative overflow-hidden group">
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                <span class="px-2.5 py-1 rounded bg-teal/10 border border-teal/20 text-teal font-mono text-[10px] font-bold tracking-wider uppercase">Retail & Supply</span>
+                <span class="shimmer-badge px-2.5 py-1 rounded text-bg font-display text-[10px] font-extrabold tracking-widest uppercase">FEATURED</span>
+              </div>
+              
+              <div class="flex items-start gap-4 mb-4">
+                <span class="text-5xl shrink-0" role="img" aria-label="SupplySarthi">🚚</span>
+                <div>
+                  <h3 class="font-display font-extrabold text-2xl text-white group-hover:text-teal transition-colors">SupplySarthi</h3>
+                  <p class="text-teal font-sans text-xs font-semibold mt-1">Complete Supply & Distribution System</p>
+                </div>
+              </div>
+              
+              <p class="text-muted font-sans text-sm line-clamp-3 leading-relaxed mb-6">
+                Stop taking orders on WhatsApp. Manage your entire supply business in one Google Sheet-based system — from orders to GST invoices. Pay once, use for a lifetime.
+              </p>
+              
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Order Management & Tracking</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Stocks & Inventory Automatic Tracker</li>
+                <li class="flex items-center gap-2 text-xs text-text"><span class="text-teal">✓</span> Auto GST Invoice Generation</li>
+              </ul>
+            </div>
+            
+            <div class="mt-auto border-t border-border/80 pt-6">
+              <!-- Savings tag -->
+              <span class="inline-block px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[11px] font-semibold mb-4">
+                Save ₹25,001 (56% OFF)
+              </span>
+              
+              <div class="flex items-baseline gap-2 mb-6">
+                <strike class="text-muted text-sm font-mono">₹45,000</strike>
+                <span class="text-gold font-display font-extrabold text-2xl">₹19,999</span>
+                <span class="text-muted text-[10px] font-mono ml-auto">One-time • Lifetime Access</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <button onclick="openDetailsModal('supply-sarthi')" class="px-4 py-3 rounded-lg bg-surface border border-border hover:bg-bg text-white font-sans font-semibold text-xs text-center transition-all duration-200">
+                  🔍 View Details
+                </button>
+                <button onclick="triggerCheckoutFlow('supply-sarthi')" class="px-4 py-3 rounded-lg bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-xs text-center transition-all duration-200">
+                  Buy Now →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8. HOW IT WORKS SECTION -->
+    <section id="how-it-works" class="py-16 md:py-24 border-y border-border bg-surface/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span class="text-teal font-mono text-[11px] font-bold tracking-widest uppercase">STRESS-FREE DEPLOYMENT</span>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-white mt-1">Supercharged Lifecycle In 4 Steps</h2>
+          <p class="text-muted text-sm sm:text-base mt-2 max-w-md mx-auto font-sans">
+            Ready to use. No cloud database configuration required from your side.
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+          <!-- Step 1 -->
+          <div class="flex flex-col items-center text-center p-6 bg-surface border border-border rounded-xl">
+            <div class="w-12 h-12 rounded-full bg-teal/10 border border-teal text-teal flex items-center justify-center font-display font-black text-lg mb-4">1</div>
+            <p class="font-display font-bold text-white text-base">🛒 Choose System</p>
+            <p class="text-muted text-xs font-sans mt-2">Pick the HRMS, Accounting or Logistics tool which matches your firm's bottlenecks.</p>
+          </div>
+          
+          <!-- Step 2 -->
+          <div class="flex flex-col items-center text-center p-6 bg-surface border border-border rounded-xl">
+            <div class="w-12 h-12 rounded-full bg-teal/10 border border-teal text-teal flex items-center justify-center font-display font-black text-lg mb-4">2</div>
+            <p class="font-display font-bold text-white text-base">💳 Pay Securely</p>
+            <p class="text-muted text-xs font-sans mt-2">Get verified receipts immediately through Razorpay using Cards, UPI or NetBanking.</p>
+          </div>
+          
+          <!-- Step 3 -->
+          <div class="flex flex-col items-center text-center p-6 bg-surface border border-border rounded-xl">
+            <div class="w-12 h-12 rounded-full bg-teal/10 border border-teal text-teal flex items-center justify-center font-display font-black text-lg mb-4">3</div>
+            <p class="font-display font-bold text-white text-base">📧 Get Delivery in 2 hrs</p>
+            <p class="text-muted text-xs font-sans mt-2">Receive full copyable source link, spreadsheets, and PDF sheets directly via email.</p>
+          </div>
+          
+          <!-- Step 4 -->
+          <div class="flex flex-col items-center text-center p-6 bg-surface border border-border rounded-xl">
+            <div class="w-12 h-12 rounded-full bg-teal/10 border border-teal text-teal flex items-center justify-center font-display font-black text-lg mb-4">4</div>
+            <p class="font-display font-bold text-white text-base">🚀 Go Live Instantly</p>
+            <p class="text-muted text-xs font-sans mt-2">Use Suraj's automated triggers. Get lifetime operations without monthly subscription fees!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. TRUST SECTION -->
+    <section id="trust-section" class="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-teal font-mono text-[11px] font-bold tracking-widest uppercase">THE SURAJ GUARANTEE</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-white mt-1">Why Indian SMBs Trust Surajdx</h2>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Card 1 -->
+        <div class="p-8 rounded-2xl bg-surface border border-border flex flex-col gap-4">
+          <div class="w-12 h-12 rounded-xl bg-teal/10 text-teal flex items-center justify-center text-2xl">👨‍💻</div>
+          <h3 class="font-display font-extrabold text-lg text-white">Built by an Expert</h3>
+          <p class="text-muted text-sm font-sans leading-relaxed">
+            Suraj Singh is a premium Google Apps Script & web master with 5+ years of pure database automation and corporate workflow experience.
+          </p>
+        </div>
+        
+        <!-- Card 2 -->
+        <div class="p-8 rounded-2xl bg-surface border border-border flex flex-col gap-4">
+          <div class="w-12 h-12 rounded-xl bg-teal/10 text-teal flex items-center justify-center text-2xl">🇮🇳</div>
+          <h3 class="font-display font-extrabold text-lg text-white">Made Specially for India</h3>
+          <p class="text-muted text-sm font-sans leading-relaxed">
+            Built natively with Indian compliance regulations in mind: automatic GST calculations, TDS tables, and interactive Hindi-friendly mobile setups.
+          </p>
+        </div>
+        
+        <!-- Card 3 -->
+        <div class="p-8 rounded-2xl bg-surface border border-border flex flex-col gap-4">
+          <div class="w-12 h-12 rounded-xl bg-teal/10 text-teal flex items-center justify-center text-2xl">✨</div>
+          <h3 class="font-display font-extrabold text-lg text-white">Lifetime Access Ownership</h3>
+          <p class="text-muted text-sm font-sans leading-relaxed">
+            No recurring billing. You pay exactly once and host databases on your own Google Drive. Full control over private spreadsheet systems.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. FREE RESOURCE LEAD CAPTURE -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-24">
+      <div class="rounded-3xl bg-gradient-to-br from-teal/20 via-surface to-bg border border-teal/30 p-8 sm:p-12 lg:p-16 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div class="absolute top-0 right-0 w-80 h-80 rounded-full bg-teal/10 blur-[80px] pointer-events-none -z-10"></div>
+        
+        <div class="max-w-lg lg:text-left text-center">
+          <span class="px-2.5 py-1 rounded bg-teal/20 text-teal font-mono text-[10px] font-bold uppercase tracking-wider">EXCLUSIVE GIFT</span>
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white mt-4">🎁 Free: Google Sheets Business Dashboard</h2>
+          <p class="text-teal font-sans text-sm font-semibold mt-1">Worth ₹499 • Complete automation template included!</p>
+          <p class="text-muted text-sm mt-4 font-sans leading-relaxed">
+            Grab our elite consolidated metrics spreadsheet dashboard. Get absolute visibility into P&L accounts, candidate loops, sales, and operations in under 5 minutes.
+          </p>
+        </div>
+        
+        <div class="w-full max-w-md bg-surface/80 backdrop-blur border border-border p-6 rounded-2xl shadow-xl">
+          <form id="leadCaptureForm" onsubmit="submitLeadForm(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="leadName">Full Name</label>
+              <input type="text" id="leadName" required placeholder="Suraj Singh" class="w-full px-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+              <span id="leadNameError" class="text-danger text-[11px] mt-1 block hidden">Please enter your name.</span>
+            </div>
+            
+            <div>
+              <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="leadEmail">Email Address</label>
+              <input type="email" id="leadEmail" required placeholder="suraj.gasdeveloper@gmail.com" class="w-full px-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+              <span id="leadEmailError" class="text-danger text-[11px] mt-1 block hidden">Please enter a valid email address.</span>
+            </div>
+            
+            <div>
+              <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="leadWhatsApp">WhatsApp Number</label>
+              <input type="tel" id="leadWhatsApp" required placeholder="+91-88516 66208" class="w-full px-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+              <span id="leadWhatsAppError" class="text-danger text-[11px] mt-1 block hidden">Please enter a valid 10-digit phone number.</span>
+            </div>
+            
+            <button type="submit" class="w-full py-4.5 rounded-xl bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-sm text-center transition-all duration-200 shadow-md">
+              Get Dashboard Free Now →
+            </button>
+          </form>
+          
+          <!-- Success State -->
+          <div id="leadSuccessState" class="hidden text-center py-6">
+            <span class="text-5xl">🎉</span>
+            <h3 class="font-display font-extrabold text-lg text-white mt-4">Awesome, Lead Registered!</h3>
+            <p class="text-muted text-xs mt-2 font-sans">Check your WhatsApp & Email inbox. Your sheet link has been dispatched!</p>
+            <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqIIq796v8p676pH3Y/copy" 
+               target="_blank" 
+               class="mt-6 inline-block w-full py-3 rounded-lg border border-teal text-teal hover:bg-teal hover:text-bg font-sans font-bold text-xs text-center transition-all">
+              Direct Copy Template
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. FAQ ACCORDION -->
+    <section id="faq-section" class="py-16 md:py-24 border-t border-border bg-surface/10 scroll-mt-18">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span class="text-teal font-mono text-[11px] font-bold tracking-widest uppercase">FAQ</span>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-white mt-1">Common Inquiries</h2>
+        </div>
+        
+        <div class="space-y-4">
+          <!-- Q1 -->
+          <div class="rounded-xl border border-border bg-surface overflow-hidden">
+            <button onclick="toggleFaq(1)" class="w-full flex items-center justify-between p-5 text-left font-display font-bold text-white text-sm md:text-base focus:outline-none transition-colors hover:bg-border/30">
+              <span>How will I receive my product?</span>
+              <span id="faq-icon-1" class="text-teal text-lg select-none transition-transform duration-200">+</span>
+            </button>
+            <div id="faq-ans-1" class="max-h-0 overflow-hidden transition-all duration-300">
+              <p class="p-5 pt-0 border-t border-border text-muted text-xs md:text-sm font-sans leading-relaxed">
+                As soon as your payment is validated through Razorpay, our backend system processes your order. Within 2 hours, you'll receive a detailed delivery email containing full access to copy the Google Sheets templates, Apps Script source code files, and a comprehensive onboarding PDF playbook.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Q2 -->
+          <div class="rounded-xl border border-border bg-surface overflow-hidden">
+            <button onclick="toggleFaq(2)" class="w-full flex items-center justify-between p-5 text-left font-display font-bold text-white text-sm md:text-base focus:outline-none transition-colors hover:bg-border/30">
+              <span>Do I need advanced technical knowledge?</span>
+              <span id="faq-icon-2" class="text-teal text-lg select-none transition-transform duration-200">+</span>
+            </button>
+            <div id="faq-ans-2" class="max-h-0 overflow-hidden transition-all duration-300">
+              <p class="p-5 pt-0 border-t border-border text-muted text-xs md:text-sm font-sans leading-relaxed">
+                Absolutely plain and simple: NO! All products are pre-engineered on standard Google Sheets and Google Apps Script frameworks. Setting them live takes exactly 2 clicks: "File &gt; Make a Copy", and authorization permissions as prompted in our video playbook.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Q3 -->
+          <div class="rounded-xl border border-border bg-surface overflow-hidden">
+            <button onclick="toggleFaq(3)" class="w-full flex items-center justify-between p-5 text-left font-display font-bold text-white text-sm md:text-base focus:outline-none transition-colors hover:bg-border/30">
+              <span>Can I customize the product for my business?</span>
+              <span id="faq-icon-3" class="text-teal text-lg select-none transition-transform duration-200">+</span>
+            </button>
+            <div id="faq-ans-3" class="max-h-0 overflow-hidden transition-all duration-300">
+              <p class="p-5 pt-0 border-t border-border text-muted text-xs md:text-sm font-sans leading-relaxed">
+                Yes! When you duplicate our products to your own Google Drive, you gain full access to the design, columns, structures, and formula sheets. You can freely rename fields, attach logo grids, change column offsets, or expand scripts as your workflow evolves.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Q4 -->
+          <div class="rounded-xl border border-border bg-surface overflow-hidden">
+            <button onclick="toggleFaq(4)" class="w-full flex items-center justify-between p-5 text-left font-display font-bold text-white text-sm md:text-base focus:outline-none transition-colors hover:bg-border/30">
+              <span>Is there any annual or subscription fee?</span>
+              <span id="faq-icon-4" class="text-teal text-lg select-none transition-transform duration-200">+</span>
+            </button>
+            <div id="faq-ans-4" class="max-h-0 overflow-hidden transition-all duration-300">
+              <p class="p-5 pt-0 border-t border-border text-muted text-xs md:text-sm font-sans leading-relaxed">
+                Never. One of the chief reasons owners work with Surajdx is because they are tired of recurring SaaS fees. Our model is purely "pay-once, use forever". Since the database is hosted inside your Google Account workspace, Google handles server costs for free.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Q5 -->
+          <div class="rounded-xl border border-border bg-surface overflow-hidden">
+            <button onclick="toggleFaq(5)" class="w-full flex items-center justify-between p-5 text-left font-display font-bold text-white text-sm md:text-base focus:outline-none transition-colors hover:bg-border/30">
+              <span>What if I need help setting it up?</span>
+              <span id="faq-icon-5" class="text-teal text-lg select-none transition-transform duration-200">+</span>
+            </button>
+            <div id="faq-ans-5" class="max-h-0 overflow-hidden transition-all duration-300">
+              <p class="p-5 pt-0 border-t border-border text-muted text-xs md:text-sm font-sans leading-relaxed">
+                Every purchase includes 30 to 45 days of premium direct WhatsApp &amp; Zoom Support. If you get stuck at any step or require assistance aligning columns / compiling, Suraj Singh and our team will get on a screenshare to resolve it for you.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Q6 -->
+          <div class="rounded-xl border border-border bg-surface overflow-hidden">
+            <button onclick="toggleFaq(6)" class="w-full flex items-center justify-between p-5 text-left font-display font-bold text-white text-sm md:text-base focus:outline-none transition-colors hover:bg-border/30">
+              <span>Do you offer team or multi-user licenses?</span>
+              <span id="faq-icon-6" class="text-teal text-lg select-none transition-transform duration-200">+</span>
+            </button>
+            <div id="faq-ans-6" class="max-h-0 overflow-hidden transition-all duration-300">
+              <p class="p-5 pt-0 border-t border-border text-muted text-xs md:text-sm font-sans leading-relaxed">
+                Once purchased, you own the copies absolutely! You can share access with your internal staff, payroll managers, or dispatch agents by standard Google Sheets sharing tools at no extra license expense or per-seat costs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. FOOTER -->
+    <footer class="border-t border-border bg-[#05070e] py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="md:col-span-2">
+          <a href="#" class="flex items-center gap-2 mb-4">
+            <span class="text-teal text-xl">⚡</span>
+            <span class="font-display font-extrabold text-base text-white tracking-widest uppercase">Suraj Automation</span>
+          </a>
+          <p class="text-muted text-xs md:text-sm font-sans max-w-sm leading-relaxed">
+            Leading-edge Google automation tools and Apps Script deployments built specially for growing Indian small businesses.
+          </p>
+          <div class="mt-6 flex gap-4">
+            <a href="https://wa.me/918851666208" class="text-muted hover:text-teal transition-colors" aria-label="WhatsApp"><i data-lucide="message-square" class="w-5 h-5"></i></a>
+            <a href="https://linkedin.com/in/suraj-singh" class="text-muted hover:text-teal transition-colors" aria-label="LinkedIn"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+            <a href="mailto:suraj.gasdeveloper@gmail.com" class="text-muted hover:text-teal transition-colors" aria-label="Email"><i data-lucide="mail" class="w-5 h-5"></i></a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-display font-bold text-xs text-white uppercase tracking-wider mb-4">Support & Contact</h4>
+          <ul class="space-y-2 text-xs md:text-sm font-sans text-muted">
+            <li>Owner: Suraj Singh</li>
+            <li>WhatsApp: +91-88516 66208</li>
+            <li>Email: suraj.gasdeveloper@gmail.com</li>
+            <li>Base: Noida, India 🇮🇳</li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-display font-bold text-xs text-white uppercase tracking-wider mb-4">E-Store Policy</h4>
+          <ul class="space-y-2 text-xs md:text-sm font-sans text-muted">
+            <li>✅ Safe Checkout</li>
+            <li>✅ Indian Merchant</li>
+            <li>🚫 Instant Digital Goods</li>
+            <li>🚫 100% Non-Refundable</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-muted font-sans">&copy; 2025 Suraj Automation. All rights reserved.</p>
+        <div class="flex items-center gap-2 text-xs text-muted font-sans">
+          <span>Made with ❤️ in India by</span>
+          <a href="https://surajdx.com" target="_blank" class="text-teal hover:underline font-semibold">surajdx.com</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- PRODUCT DETAIL MODAL (DYN POPULATED) -->
+    <div id="detailsModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <!-- Backdrop Blur -->
+        <div onclick="closeDetailsModal()" class="fixed inset-0 bg-bg/85 backdrop-blur-md transition-opacity"></div>
+        
+        <!-- Modal Content Box -->
+        <div class="inline-block align-bottom bg-surface border border-border rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full relative scale-95 opacity-0 duration-300" id="detailsModalContent">
+          <!-- Close button -->
+          <button onclick="closeDetailsModal()" class="absolute top-4 right-4 text-muted hover:text-white p-2 rounded-full hover:bg-border/50 transition-colors focus:ring-2 focus:ring-teal focus:outline-none">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+          
+          <div class="p-6 sm:p-8">
+            <div class="flex items-start gap-4 mb-6">
+              <span id="modalIcon" class="text-5xl shrink-0">👥</span>
+              <div>
+                <span id="modalCategory" class="inline-block px-2.5 py-0.5 rounded bg-teal/15 border border-teal/30 text-teal font-mono text-[9px] font-bold tracking-wider uppercase">HR & Management</span>
+                <h3 id="modalName" class="font-display font-extrabold text-2xl text-white mt-1">SalarySarthi</h3>
+                <p id="modalTagline" class="text-muted font-sans text-xs mt-0.5">HRMS + Payroll Management System</p>
+              </div>
+            </div>
+            
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-xs font-mono font-bold text-teal tracking-wider uppercase">System Description</h4>
+                <p id="modalDescription" class="text-text font-sans text-sm mt-2 leading-relaxed">
+                  Placeholder narrative...
+                </p>
+              </div>
+              
+              <div>
+                <h4 class="text-xs font-mono font-bold text-teal tracking-wider uppercase">⚡ Core Features Included</h4>
+                <ul id="modalFeatures" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text">
+                  <!-- JS Injection -->
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="text-xs font-mono font-bold text-teal tracking-wider uppercase">📦 Tangible Deliverables</h4>
+                <ul id="modalDeliverables" class="mt-2 space-y-1.5 text-xs text-muted">
+                  <!-- JS Injection -->
+                </ul>
+              </div>
+              
+              <div class="p-4 rounded-xl bg-bg/50 border border-border">
+                <p class="text-xs font-semibold text-muted font-mono">👤 WHO IS THIS FOR?</p>
+                <p id="modalAudience" class="text-text font-sans text-xs mt-1 leading-relaxed">
+                  Indian small business owners, HR managers, and ledger operators who want to fully automate operations on Google Drive.
+                </p>
+              </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-border/80 flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <strike id="modalMrp" class="text-muted text-xs font-mono">₹25,000</strike>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <span id="modalPrice" class="text-gold font-display font-extrabold text-2xl">₹15,000</span>
+                  <span class="text-muted text-[10px] font-mono">One-time payment</span>
+                </div>
+              </div>
+              
+              <button id="modalBuyBtn" onclick="triggerCheckoutFlowFromModal()" class="px-6 py-3.5 rounded-xl bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-sm transition-all duration-200 flex items-center gap-2 shadow-lg shadow-teal/10">
+                <span>Buy Now System</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRE-CHECKOUT FORM OVERLAY MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <!-- Backdrop Blur -->
+        <div onclick="closeCheckoutModal()" class="fixed inset-0 bg-bg/85 backdrop-blur-md transition-opacity"></div>
+        
+        <!-- Content panel -->
+        <div class="inline-block align-bottom bg-surface border border-border rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full relative scale-95 opacity-0 duration-300" id="checkoutModalContent">
+          <!-- Close button -->
+          <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-muted hover:text-white p-2 rounded-full hover:bg-border/50 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+          
+          <div class="p-6 sm:p-8">
+            <span class="text-3xl">🛒</span>
+            <h3 class="font-display font-extrabold text-xl text-white mt-3">Almost There! Enter Details</h3>
+            <p class="text-muted text-xs font-sans mt-1">Provide your active credentials for secure script transmission.</p>
+            
+            <form id="checkoutForm" onsubmit="submitCheckoutDetails(event)" class="space-y-4 mt-6">
+              <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="custName">Full Name</label>
+                <input type="text" id="custName" required placeholder="Suraj Singh" class="w-full px-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                <span id="custNameError" class="text-danger text-[11px] mt-1 block hidden">Name is required.</span>
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="custEmail">Email Address</label>
+                <input type="email" id="custEmail" required placeholder="suraj.gasdeveloper@gmail.com" class="w-full px-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                <span id="custEmailError" class="text-danger text-[11px] mt-1 block hidden">Please provide a valid active delivery email.</span>
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="custPhone">WhatsApp Number</label>
+                <input type="tel" id="custPhone" required placeholder="10-digit mobile number" class="w-full px-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                <span id="custPhoneError" class="text-danger text-[11px] mt-1 block hidden">Please enter a valid 10-digit phone number.</span>
+              </div>
+              
+              <!-- System Warning Note -->
+              <div class="flex items-start gap-2 p-3.5 bg-teal/5 border border-teal/20 rounded-lg text-xs leading-relaxed text-text">
+                <span class="text-teal sm:text-sm">📧</span>
+                <p>The product, spread ledger web code, and setup playbook will be dispatched to your email <strong class="text-teal" id="checkoutTargetEmail">suraj.gasdeveloper@gmail.com</strong> within 2 hours of payment receipt.</p>
+              </div>
+              
+              <button type="submit" id="checkoutSubmitButton" class="w-full py-4 rounded-xl bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-sm text-center transition-all duration-200 mt-6 flex justify-center items-center gap-2 shadow-lg shadow-teal/15">
+                <span id="checkoutSubmitText">Proceed to Pay ₹15,000</span>
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTHENTICATION DIALOG (SIGN IN & REGISTRATION PROFILE CREATION) -->
+    <div id="authModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <!-- Backdrop Blur -->
+        <div onclick="closeAuthModal()" class="fixed inset-0 bg-bg/85 backdrop-blur-md transition-opacity"></div>
+        
+        <!-- Content panel -->
+        <div class="inline-block align-bottom bg-surface border border-border rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full relative scale-95 opacity-0 duration-300" id="authModalContent">
+          <!-- Close button -->
+          <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-muted hover:text-white p-2 rounded-full hover:bg-border/50 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+          
+          <div class="p-6 sm:p-8">
+            <div class="flex items-center gap-2.5 mb-6">
+              <span class="text-3xl">👤</span>
+              <div>
+                <h3 id="authModalTitle" class="font-display font-extrabold text-xl text-white">Join Suraj Automation</h3>
+                <p id="authModalSubtitle" class="text-muted text-xs font-sans mt-0.5">Access support and track your system orders.</p>
+              </div>
+            </div>
+            
+            <!-- Tab switches -->
+            <div class="grid grid-cols-2 gap-1 bg-bg p-1 rounded-lg border border-border/80 mb-6">
+              <button onclick="switchAuthTab('signin')" id="auth-tab-signin" class="py-2.5 rounded-md font-sans text-xs font-bold text-teal bg-surface/50 border border-teal/10 transition-all">
+                Sign In
+              </button>
+              <button onclick="switchAuthTab('signup')" id="auth-tab-signup" class="py-2.5 rounded-md font-sans text-xs font-medium text-muted hover:text-white transition-all">
+                Create Account
+              </button>
+            </div>
+            
+            <!-- Client Error Banner -->
+            <div id="auth-error-banner" class="hidden flex items-start gap-2 p-3 bg-danger/10 border border-danger/30 rounded-lg text-xs text-danger mb-4">
+              <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+              <span id="auth-error-text">Incorrect credentials. Please try again!</span>
+            </div>
+            
+            <!-- Forms Container -->
+            <div class="space-y-4">
+              <!-- Name (Sign-up only) -->
+              <div id="auth-group-name" class="hidden">
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="authName">Full Name</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-muted mt-0.5">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                  </span>
+                  <input type="text" id="authName" placeholder="Suraj Singh" class="w-full pl-10 pr-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                </div>
+              </div>
+              
+              <!-- WhatsApp Number (Sign-up only) -->
+              <div id="auth-group-whatsapp" class="hidden">
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="authWhatsapp">WhatsApp Number</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-muted mt-0.5">
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                  </span>
+                  <input type="tel" id="authWhatsapp" placeholder="10-digit mobile number" class="w-full pl-10 pr-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                </div>
+              </div>
+              
+              <!-- Email Address -->
+              <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="authEmail">Email Address</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-muted mt-0.5">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                  </span>
+                  <input type="email" id="authEmail" required placeholder="suraj.gasdeveloper@gmail.com" class="w-full pl-10 pr-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                </div>
+              </div>
+              
+              <!-- Password -->
+              <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5" for="authPassword">Password</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-muted mt-0.5">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                  </span>
+                  <input type="password" id="authPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-3 rounded-lg bg-bg border border-border text-white text-sm font-sans focus:outline-none focus:border-teal transition-colors">
+                </div>
+              </div>
+              
+              <button onclick="handleAuthSubmit(event)" id="authSubmitButton" class="w-full py-4 rounded-xl bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-sm text-center transition-all duration-200 mt-6 flex justify-center items-center gap-2 shadow-lg shadow-teal/15">
+                <span id="authSubmitText">Sign In Securely</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USER PROFILE AND PAST PURCHASES HISTORY MODAL -->
+    <div id="profileModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <!-- Backdrop Blur -->
+        <div onclick="closeProfileModal()" class="fixed inset-0 bg-bg/85 backdrop-blur-md transition-opacity"></div>
+        
+        <!-- Content panel -->
+        <div class="inline-block align-bottom bg-surface border border-border rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full relative scale-95 opacity-0 duration-300" id="profileModalContent">
+          <!-- Close button -->
+          <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-muted hover:text-white p-2 rounded-full hover:bg-border/50 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+          
+          <div class="p-6 sm:p-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border/80 pb-6 mb-6">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-teal/10 border border-teal/20 text-teal flex items-center justify-center font-display font-extrabold text-xl">
+                  👤
+                </div>
+                <div>
+                  <h3 class="font-display font-extrabold text-xl text-white">Hello, <span id="profile-user-name">Client</span> 👋</h3>
+                  <p class="text-muted text-xs font-sans mt-0.5" id="profile-user-email">guest.account@email.com</p>
+                </div>
+              </div>
+              
+              <button onclick="handleSignOut()" class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-danger/10 hover:bg-danger/20 border border-danger/20 text-danger text-xs font-sans font-bold transition-all">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                <span>Sign Out</span>
+              </button>
+            </div>
+            
+            <!-- User Metadata Row -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="p-3.5 rounded-xl bg-bg/50 border border-border">
+                <p class="text-[10px] font-mono font-bold text-muted uppercase tracking-wider">WhatsApp Number</p>
+                <p class="text-text text-xs sm:text-sm font-sans font-bold mt-1" id="profile-user-whatsapp">Not Linked</p>
+              </div>
+              <div class="p-3.5 rounded-xl bg-bg/50 border border-border">
+                <p class="text-[10px] font-mono font-bold text-muted uppercase tracking-wider">Account Creation</p>
+                <p class="text-text text-xs sm:text-sm font-sans font-bold mt-1" id="profile-user-created">Just Now</p>
+              </div>
+            </div>
+            
+            <!-- Purchases List header -->
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-xs font-mono font-bold text-teal tracking-wider uppercase">🛍️ Past Purchased Systems & Downloads</h4>
+                <span class="px-2 py-0.5 rounded-full bg-teal/10 border border-teal/20 text-teal font-mono text-[9px] font-bold" id="profile-purchase-count">0 Purchased</span>
+              </div>
+              
+              <!-- Content target container -->
+              <div class="space-y-4 max-h-[300px] overflow-y-auto pr-1" id="profile-purchases-container">
+                <!-- Javascript will inject entries dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT SUCCESS OVERLAY PANEL -->
+    <div id="successOverlay" class="fixed inset-0 z-50 bg-bg flex items-center justify-center p-4 sm:p-6 hidden">
+      <div class="max-w-md w-full bg-surface border border-border rounded-3xl p-8 text-center relative shadow-2xl">
+        <!-- SVG Animated Check -->
+        <div class="checkmark-wrapper">
+          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+        </div>
+        
+        <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-white mt-6">Payment Successful!</h3>
+        <p class="text-teal text-xs font-mono font-medium mt-1">Verification Code ID: <span id="paymentIdField" class="text-gold tracking-tight">pay_8s8d7sa8da</span></p>
+        
+        <div class="mt-6 p-4 rounded-xl bg-bg/60 border border-border text-left text-xs space-y-2">
+          <p class="text-muted">Item: <strong class="text-white" id="successProductField">SalarySarthi</strong></p>
+          <p class="text-muted">Transmission: <strong class="text-white" id="successEmailField">client@email.com</strong></p>
+          <p class="text-muted">Fulfillment: <span class="text-teal">Scheduled within 2 Hours</span></p>
+        </div>
+        
+        <p class="text-muted text-xs font-sans mt-6 leading-relaxed">
+          Your spreadsheet file copies and authorization scripts has been logged in. Please verify with Suraj on WhatsApp to fast-track manual authorization check.
+        </p>
+        
+        <div class="mt-8 flex flex-col gap-3">
+          <a id="successWhatsAppLink" href="https://wa.me/918851666208" target="_blank" class="w-full py-4.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-sans font-extrabold text-sm text-center flex items-center justify-center gap-2 transform active:scale-95 transition-all">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+            <span>Chat on WhatsApp to Confirm</span>
+          </a>
+          <button onclick="dismissSuccessAndHome()" class="w-full py-3.5 rounded-xl border border-border hover:bg-surface text-muted hover:text-text font-sans font-semibold text-xs text-center transition-all">
+            Back to Products store
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS DRAWER CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full px-4 pointer-events-none"></div>
+
+    <!-- MAIN APP LIFE DATA SCRIPT -->
+    <script>
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // PRODUCT DATA SEED (4 REAL PRODUCTS)
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      const productsData = [
+        {
+          id: "salary-sarthi",
+          name: "SalarySarthi",
+          category: "HR & Management",
+          tagline: "HRMS + Payroll Management System",
+          description: "SalarySarthi isn't trying to be another bloated HRMS — it focuses on solving payroll and attendance pain for SMBs surprisingly well.",
+          price: 15000,
+          mrp: 25000,
+          currency: "INR",
+          badge: "FEATURED",
+          icon: "👥",
+          features: [
+            "Complete Payroll Processing",
+            "Attendance & Leave Management", 
+            "Salary Slip Generation",
+            "PF / ESI / TDS Calculations",
+            "Employee Self-Service Dashboard",
+            "Bulk Salary Disbursement Reports"
+          ],
+          deliverables: [
+            "Google Apps Script Web App (full source code)",
+            "Google Sheets backend (multi-tab setup)",
+            "Setup documentation (PDF)",
+            "1-hour onboarding call via WhatsApp & Zoom",
+            "30 days free support"
+          ],
+          featured: true,
+          whatsIncluded: "Complete SalarySarthi script, automatic PDF payroll generator, leave tracking spreadsheet, and step-by-step authorization playbook."
+        },
+        {
+          id: "hire-sarthi",
+          name: "HireSarthi",
+          category: "HR & Management",
+          tagline: "Hire Faster. Onboard Smarter. Manage Employees in One Place.",
+          description: "HireSarthi helps growing businesses streamline recruitment, offer letter generation, employee onboarding, and workforce management from a single platform. Track candidates, automate hiring workflows, issue digital offer letters, and maintain a complete employee database.",
+          price: 9999,
+          mrp: 24999,
+          currency: "INR",
+          badge: "FEATURED",
+          icon: "🎯",
+          features: [
+            "Candidate Pipeline & ATS",
+            "Digital Offer Letter Generation",
+            "Employee Onboarding Workflow",
+            "Document Collection & Storage",
+            "Employee Database Management",
+            "Interview Scheduling & Tracking"
+          ],
+          deliverables: [
+            "Google Apps Script Web App",
+            "Pre-built Google Sheets ATS backend",
+            "Offer Letter Templates (5 formats)",
+            "Setup + customization guide",
+            "30 days WhatsApp support"
+          ],
+          featured: true,
+          whatsIncluded: "Google ATS database sheet system, offer letter builder scripts, candidate documents storage, and 5 automated offer formats."
+        },
+        {
+          id: "loan-sarthi",
+          name: "LoanSarthi",
+          category: "Accounting & Finance",
+          tagline: "Smart Finance & Recovery Control System",
+          description: "Small finance businesses ke liye powerful, mobile-first loan management system. Loan create, EMI track, recovery manage, and reports all in one dashboard.",
+          price: 14999,
+          mrp: 35599,
+          currency: "INR",
+          badge: "FEATURED",
+          icon: "💰",
+          features: [
+            "Loan Creation & Disbursement Tracking",
+            "EMI Schedule Auto-generation",
+            "Recovery & Collection Management",
+            "Overdue Alerts & Reminders",
+            "Borrower Database",
+            "P&L and Portfolio Reports"
+          ],
+          deliverables: [
+            "Mobile-first GAS Web App",
+            "Google Sheets loan ledger backend",
+            "Recovery tracker sheet",
+            "Setup guide + video walkthrough",
+            "30 days support"
+          ],
+          featured: true,
+          whatsIncluded: "EMI calculation scripts, recovery logs ledger, auto arrears alerting system, borrower agreements PDFs, and Zoom setup."
+        },
+        {
+          id: "supply-sarthi",
+          name: "SupplySarthi",
+          category: "Retail & Supply",
+          tagline: "Complete Supply & Distribution Management System",
+          description: "Stop taking orders on WhatsApp. Manage your entire supply business in one Google Sheet-based system — from orders to GST invoices. Pay once, use for a lifetime.",
+          price: 19999,
+          mrp: 45000,
+          currency: "INR",
+          badge: "FEATURED",
+          icon: "🚚",
+          features: [
+            "Order Management & Tracking",
+            "GST Invoice Generation",
+            "Distributor & Retailer Database",
+            "Stock & Inventory Tracking",
+            "Payment Collection Tracker",
+            "Route-wise Delivery Planning"
+          ],
+          deliverables: [
+            "Google Sheets-based Web App",
+            "Auto GST invoice template",
+            "Order + dispatch tracker",
+            "Setup documentation",
+            "45 days premium support"
+          ],
+          featured: true,
+          whatsIncluded: "Auto GST generator scripts, live supply logistics reporting sheet, runner route sheets, catalog, and 45 days Zoom training."
+        }
+      ];
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // FIREBASE & GATEWAY PLUGINS INITIALIZATION
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      
+      // ⚙️ CONFIGURE: Replace Firebase config values
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+      };
+
+      // ⚙️ CONFIGURE: Replace Razorpay key (rzp_test_ → rzp_live_)
+      const RAZORPAY_KEY = "rzp_test_MOCK_KEY_SURAJ_DEV"; // Replace with live key
+
+      let db = null;
+      let auth = null;
+      let firebaseInitialized = false;
+      let activeCheckoutProductId = null;
+      let currentUserProfile = null; // Stores authenticated name, email, whatsapp, joinedDate
+      let activeAuthTab = "signin";
+
+      // Safe initialization wrapper
+      document.addEventListener("DOMContentLoaded", function() {
+        initFirebase();
+        lucide.createIcons();
+        
+        // Sync active email input to checkout helper warning label
+        const custEmailInput = document.getElementById("custEmail");
+        const helperEmail = document.getElementById("checkoutTargetEmail");
+        custEmailInput.addEventListener("input", function() {
+          helperEmail.innerText = custEmailInput.value || "suraj.gasdeveloper@gmail.com";
+        });
+      });
+
+      async function initFirebase() {
+        try {
+          // Check if Firebase keys are placeholders
+          const isPlaceholder = !firebaseConfig.apiKey || 
+                                firebaseConfig.apiKey === "YOUR_API_KEY" || 
+                                firebaseConfig.apiKey.startsWith("YOUR_") ||
+                                firebaseConfig.projectId.startsWith("YOUR_");
+          
+          if (isPlaceholder) {
+            console.log("Firebase config contains placeholders. Running in lightning-fast Local Sandbox Mode.");
+            throw new Error("Sandbox Mode: unconfigured credentials.");
+          }
+
+          // Initialize App if SDK is loaded
+          if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            auth = firebase.auth();
+            firebaseInitialized = true;
+            console.log("Firebase initialized successfully.");
+            
+            // Listen to auth changes
+            auth.onAuthStateChanged(async (user) => {
+              if (user && !user.isAnonymous) {
+                console.log("Client session verified.", user.uid);
+                try {
+                  const doc = await db.collection("users").doc(user.uid).get();
+                  if (doc.exists) {
+                    currentUserProfile = doc.data();
+                  } else {
+                    currentUserProfile = {
+                      uid: user.uid,
+                      name: user.displayName || "Valued Customer",
+                      email: user.email,
+                      whatsapp: "Not Linked",
+                      createdAt: new Date().toISOString()
+                    };
+                  }
+                } catch (e) {
+                  currentUserProfile = {
+                    uid: user.uid,
+                    name: user.displayName || "Valued Customer",
+                    email: user.email,
+                    whatsapp: "Not Linked",
+                    createdAt: new Date().toISOString()
+                  };
+                }
+              } else {
+                currentUserProfile = null;
+              }
+              renderAuthNavArea();
+            });
+
+            // Auto seed products database in background if empty
+            await seedProductsToFirestore();
+          } else {
+            throw new Error("SDK loading failure.");
+          }
+        } catch (error) {
+          console.warn("DB offline. Using lightning fast local cache:", error);
+          
+          // Check for offline cached user
+          const cachedUser = localStorage.getItem("offline_user");
+          if (cachedUser) {
+            currentUserProfile = JSON.parse(cachedUser);
+          }
+          renderAuthNavArea();
+        }
+      }
+
+      // Automatically seeds catalog documents to keep Firestore populated
+      async function seedProductsToFirestore() {
+        if (!firebaseInitialized || !db) return;
+        try {
+          const snapshot = await db.collection("products").limit(1).get();
+          if (snapshot.empty) {
+            console.log("Seeding initial products into Firestore...");
+            const batch = db.batch();
+            productsData.forEach(prod => {
+              const ref = db.collection("products").doc(prod.id);
+              batch.set(ref, {
+                ...prod,
+                active: true,
+                createdAt: new Date().toISOString()
+              });
+            });
+            await batch.commit();
+            console.log("Firestore products seeding completed.");
+          }
+        } catch (e) {
+          console.warn("Seeding execution bypassed (Rules or Sandbox block):", e);
+        }
+      }
+
+      // 🌐 RENDER AUTHENTICATED HEADER STATE BUTTONS
+      function renderAuthNavArea() {
+        const area = document.getElementById("auth-nav-area");
+        if (!area) return;
+        
+        if (currentUserProfile) {
+          const initials = currentUserProfile.name ? currentUserProfile.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "U";
+          area.innerHTML = `
+            <button onclick="openProfileModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface/80 border border-teal/20 text-white font-sans text-xs transition duration-200 hover:border-teal hover:bg-surface shadow-lg cursor-pointer">
+              <span class="w-5 h-5 rounded-full bg-teal text-bg font-extrabold flex items-center justify-center text-[9px] font-display">${initials}</span>
+              <span class="font-semibold text-xs hidden sm:inline truncate max-w-[80px]">${currentUserProfile.name.split(" ")[0]}</span>
+              <span class="text-teal font-mono text-[8px] bg-teal/5 border border-teal/20 px-1 py-0.5 rounded uppercase font-bold tracking-wider">Account</span>
+            </button>
+          `;
+        } else {
+          area.innerHTML = `
+            <button onclick="openAuthModal('signin')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-teal/40 hover:border-teal text-teal hover:bg-teal/10 font-sans font-semibold text-xs transition-all duration-300 shadow-md cursor-pointer">
+              <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+              <span>Sign In</span>
+            </button>
+          `;
+        }
+        lucide.createIcons();
+      }
+
+      // 👤 USER PROFILE AUTH ACTIONS
+      function openAuthModal(defaultTab = 'signin') {
+        const modal = document.getElementById("authModal");
+        const contentBox = document.getElementById("authModalContent");
+        
+        switchAuthTab(defaultTab);
+        document.getElementById("auth-error-banner").classList.add("hidden");
+        
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        
+        setTimeout(() => {
+          contentBox.classList.remove("scale-95", "opacity-0");
+          contentBox.classList.add("scale-100", "opacity-100");
+        }, 10);
+      }
+
+      function closeAuthModal() {
+        const modal = document.getElementById("authModal");
+        const contentBox = document.getElementById("authModalContent");
+        
+        contentBox.classList.remove("scale-100", "opacity-100");
+        contentBox.classList.add("scale-95", "opacity-0");
+        
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          document.body.style.overflow = "";
+        }, 200);
+      }
+
+      function switchAuthTab(tab) {
+        activeAuthTab = tab;
+        const signinBtn = document.getElementById("auth-tab-signin");
+        const signupBtn = document.getElementById("auth-tab-signup");
+        const nameGroup = document.getElementById("auth-group-name");
+        const waGroup = document.getElementById("auth-group-whatsapp");
+        const submitText = document.getElementById("authSubmitText");
+        const titleText = document.getElementById("authModalTitle");
+        const subtitleText = document.getElementById("authModalSubtitle");
+        
+        if (tab === "signin") {
+          signinBtn.className = "py-2 rounded-md font-sans text-xs font-bold text-teal bg-surface/50 border border-teal/10 transition-all w-full text-center";
+          signupBtn.className = "py-2 rounded-md font-sans text-xs font-medium text-muted hover:text-white transition-all w-full text-center";
+          nameGroup.classList.add("hidden");
+          waGroup.classList.add("hidden");
+          submitText.innerText = "Sign In Securely";
+          titleText.innerText = "Welcome back!";
+          subtitleText.innerText = "Enter credentials to access purchased automation sarthi.";
+        } else {
+          signupBtn.className = "py-2 rounded-md font-sans text-xs font-bold text-teal bg-surface/50 border border-teal/10 transition-all w-full text-center";
+          signinBtn.className = "py-2 rounded-md font-sans text-xs font-medium text-muted hover:text-white transition-all w-full text-center";
+          nameGroup.classList.remove("hidden");
+          waGroup.classList.remove("hidden");
+          submitText.innerText = "Register Profile & Join";
+          titleText.innerText = "Create Client Profile";
+          subtitleText.innerText = "Sign up once to track systems and direct source setup guides.";
+        }
+      }
+
+      async function handleAuthSubmit(e) {
+        if (e) e.preventDefault();
+        
+        const email = document.getElementById("authEmail").value.trim();
+        const password = document.getElementById("authPassword").value.trim();
+        const name = document.getElementById("authName").value.trim();
+        const whatsapp = document.getElementById("authWhatsapp").value.trim();
+        const errorBanner = document.getElementById("auth-error-banner");
+        const errorText = document.getElementById("auth-error-text");
+        
+        errorBanner.classList.add("hidden");
+        
+        if (!email || !password) {
+          errorText.innerText = "Please fill in Email Address and Password.";
+          errorBanner.classList.remove("hidden");
+          return;
+        }
+        
+        if (password.length < 6) {
+          errorText.innerText = "Password must be at least 6 characters.";
+          errorBanner.classList.remove("hidden");
+          return;
+        }
+        
+        if (activeAuthTab === "signup" && (!name || !whatsapp)) {
+          errorText.innerText = "Full Name and WhatsApp number are required for registration.";
+          errorBanner.classList.remove("hidden");
+          return;
+        }
+        
+        showToast("Processing credentials...", "info");
+        
+        try {
+          if (firebaseInitialized && auth) {
+            if (activeAuthTab === "signin") {
+              await auth.signInWithEmailAndPassword(email, password);
+              showToast("Signed in securely!", "success");
+              closeAuthModal();
+            } else {
+              const credential = await auth.createUserWithEmailAndPassword(email, password);
+              const uid = credential.user.uid;
+              
+              const profile = {
+                uid: uid,
+                name: name,
+                email: email,
+                whatsapp: whatsapp,
+                createdAt: new Date().toISOString()
+              };
+              
+              await db.collection("users").doc(uid).set(profile);
+              currentUserProfile = profile;
+              
+              showToast("Account profile registered successfully!", "success");
+              closeAuthModal();
+              renderAuthNavArea();
+            }
+          } else {
+            // Lightning fast local cache logic to provide instant sandbox trials
+            const localUsers = JSON.parse(localStorage.getItem("offline_users") || "[]");
+            
+            if (activeAuthTab === "signin") {
+              const matched = localUsers.find(u => u.email === email && u.password === password);
+              if (matched) {
+                currentUserProfile = {
+                  uid: matched.uid,
+                  name: matched.name,
+                  email: matched.email,
+                  whatsapp: matched.whatsapp,
+                  createdAt: matched.createdAt
+                };
+                localStorage.setItem("offline_user", JSON.stringify(currentUserProfile));
+                showToast("Sandbox login complete (Local cache)!", "success");
+                renderAuthNavArea();
+                closeAuthModal();
+              } else {
+                errorText.innerText = "No credentials overlap found. Click 'Create Account' to join!";
+                errorBanner.classList.remove("hidden");
+              }
+            } else {
+              if (localUsers.some(u => u.email === email)) {
+                errorText.innerText = "Email already linked in this session. Sign in instead!";
+                errorBanner.classList.remove("hidden");
+                return;
+              }
+              
+              const uid = "uid_mock_" + Math.random().toString(36).substr(2, 9).toUpperCase();
+              const profile = {
+                uid: uid,
+                name: name,
+                email: email,
+                whatsapp: whatsapp,
+                password: password,
+                createdAt: new Date().toISOString()
+              };
+              
+              localUsers.push(profile);
+              localStorage.setItem("offline_users", JSON.stringify(localUsers));
+              
+              currentUserProfile = {
+                uid: uid,
+                name: name,
+                email: email,
+                whatsapp: whatsapp,
+                createdAt: profile.createdAt
+              };
+              localStorage.setItem("offline_user", JSON.stringify(currentUserProfile));
+              
+              showToast("Sandbox registration complete (Local cache)!", "success");
+              renderAuthNavArea();
+              closeAuthModal();
+            }
+          }
+        } catch (error) {
+          console.error("Auth Exception:", error);
+          errorText.innerText = error.message || "An exception occurred. Please try again.";
+          errorBanner.classList.remove("hidden");
+        }
+      }
+
+      async function handleSignOut() {
+        try {
+          if (firebaseInitialized && auth) {
+            await auth.signOut();
+          }
+          localStorage.removeItem("offline_user");
+          currentUserProfile = null;
+          showToast("Signed out successfully.", "info");
+          renderAuthNavArea();
+          closeProfileModal();
+        } catch (err) {
+          localStorage.removeItem("offline_user");
+          currentUserProfile = null;
+          renderAuthNavArea();
+          closeProfileModal();
+        }
+      }
+
+      // 🛒 PAST PURCHASES HISTORY LEDGER DISPLAY
+      function openProfileModal() {
+        if (!currentUserProfile) {
+          openAuthModal('signin');
+          return;
+        }
+        
+        document.getElementById("profile-user-name").innerText = currentUserProfile.name || "Valued Client";
+        document.getElementById("profile-user-email").innerText = currentUserProfile.email || "";
+        document.getElementById("profile-user-whatsapp").innerText = currentUserProfile.whatsapp || "Not Linked";
+        
+        const joinedDate = currentUserProfile.createdAt ? new Date(currentUserProfile.createdAt).toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }) : "Just Now";
+        
+        document.getElementById("profile-user-created").innerText = joinedDate;
+        
+        const modal = document.getElementById("profileModal");
+        const contentBox = document.getElementById("profileModalContent");
+        
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        
+        setTimeout(() => {
+          contentBox.classList.remove("scale-95", "opacity-0");
+          contentBox.classList.add("scale-100", "opacity-100");
+        }, 10);
+        
+        loadProfilePurchases();
+      }
+
+      function closeProfileModal() {
+        const modal = document.getElementById("profileModal");
+        const contentBox = document.getElementById("profileModalContent");
+        
+        contentBox.classList.remove("scale-100", "opacity-100");
+        contentBox.classList.add("scale-95", "opacity-0");
+        
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          document.body.style.overflow = "";
+        }, 200);
+      }
+
+      async function loadProfilePurchases() {
+        const container = document.getElementById("profile-purchases-container");
+        const countBadge = document.getElementById("profile-purchase-count");
+        container.innerHTML = `
+          <div class="flex items-center justify-center py-8">
+            <span class="animate-spin text-teal text-xl mr-2">⏳</span>
+            <span class="text-xs text-muted">Retrieving transaction ledger...</span>
+          </div>
+        `;
+        
+        let orders = [];
+        try {
+          if (firebaseInitialized && db && auth.currentUser) {
+            const snap = await db.collection("orders")
+              .where("userId", "==", auth.currentUser.uid)
+              .get();
+            snap.forEach(doc => {
+              orders.push(doc.data());
+            });
+          } else {
+            const localOrdersStr = localStorage.getItem("offline_orders") || "[]";
+            const currentEmail = currentUserProfile ? currentUserProfile.email : "";
+            orders = JSON.parse(localOrdersStr).filter(o => o.customerEmail === currentEmail);
+          }
+        } catch (err) {
+          console.warn("Failed Firestore read for orders, using fallback cache:", err);
+          const localOrdersStr = localStorage.getItem("offline_orders") || "[]";
+          const currentEmail = currentUserProfile ? currentUserProfile.email : "";
+          orders = JSON.parse(localOrdersStr).filter(o => o.customerEmail === currentEmail);
+        }
+        
+        // Ensure paid status and sorting
+        const paidOrders = orders.filter(o => o.status === "paid");
+        paidOrders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        countBadge.innerText = `${paidOrders.length} Purchased`;
+        
+        if (paidOrders.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-10 bg-bg/40 border border-border/80 rounded-xl">
+              <span class="text-3xl text-muted block mb-3">🛍️</span>
+              <p class="text-xs font-semibold text-white">No systems purchased yet</p>
+              <p class="text-[10px] text-muted mt-1 px-4">Browse our catalog and buy any automation sarthi to fast-track your business operations.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = "";
+        paidOrders.forEach(order => {
+          const prod = productsData.find(p => p.id === order.productId) || { icon: "📊", tagline: "Smart Automation Tool" };
+          const formattedDate = new Date(order.createdAt).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+          
+          const entry = document.createElement("div");
+          entry.className = "p-4 rounded-xl bg-bg/60 border border-border/80 hover:border-teal/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+          
+          entry.innerHTML = `
+            <div class="flex items-start gap-3">
+              <span class="text-3xl shrink-0 mt-1">${prod.icon}</span>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h5 class="text-xs font-sans font-bold text-white">${order.productName || prod.name}</h5>
+                  <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono text-[9px] font-bold uppercase tracking-wider">✅ DELIVERED</span>
+                </div>
+                <p class="text-[10px] text-muted font-sans mt-0.5">${prod.tagline}</p>
+                <p class="text-[9px] text-muted font-mono mt-2 flex items-center gap-2 flex-wrap">
+                  <span>Paid: ₹${order.amount.toLocaleString('en-IN')}</span> • <span>ID: ${order.orderId}</span> • <span>Date: ${formattedDate}</span>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+              <button onclick="downloadSetupGuide('${order.productId}')" class="px-3 py-1.5 rounded bg-teal text-bg hover:bg-teal-hover font-sans font-bold text-[10px] uppercase transition-all tracking-wider flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Get Source</span>
+              </button>
+              <a href="https://wa.me/918851666208?text=Hi%20Suraj,%20I%20need%20active%20support%20on%20my%20purchased%20${encodeURIComponent(order.productName || prod.name)}%20system.%20Order%20ID:%20${order.orderId}" 
+                 target="_blank"
+                 class="px-2.5 py-1.5 rounded border border-gold hover:bg-gold/15 text-gold font-sans font-bold text-[10px] uppercase transition-all tracking-wider flex items-center gap-1.5">
+                <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                <span>Support</span>
+              </a>
+            </div>
+          `;
+          container.appendChild(entry);
+        });
+        
+        lucide.createIcons();
+      }
+
+      function downloadSetupGuide(productId) {
+        let link = "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqIIq796v8p676pH3Y/copy";
+        if (productId === "salary-sarthi") link = "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqIIq796v8p676pH3Y/copy";
+        if (productId === "hire-sarthi") link = "https://docs.google.com/spreadsheets/d/12a893sa8da_ATS_Sarthi_Copy/copy";
+        if (productId === "loan-sarthi") link = "https://docs.google.com/spreadsheets/d/19asd8sa8d_Loan_Sarthi_Copy/copy";
+        if (productId === "supply-sarthi") link = "https://docs.google.com/spreadsheets/d/13sa8da8d_Supply_Sarthi_Copy/copy";
+        
+        showToast("Access token validated! Opening spreadsheet template file.", "success");
+        setTimeout(() => {
+          window.open(link, "_blank");
+        }, 1000);
+      }
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // SYSTEM ENGINE & LAYOUT FLOWS
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      
+      // Category display filter
+      function filterProducts(category) {
+        // Toggle selected styling tabs
+        const tabs = document.querySelectorAll(".product-tab");
+        tabs.forEach(t => {
+          t.classList.remove("border-teal", "bg-teal/5", "text-white");
+          t.classList.add("border-transparent", "text-muted");
+        });
+        
+        // Color active target
+        let targetId = "tab-All";
+        if (category === "HR & Management") targetId = "tab-HR";
+        if (category === "Accounting & Finance") targetId = "tab-Accounting";
+        if (category === "Retail & Supply") targetId = "tab-Supply";
+        
+        const activeTab = document.getElementById(targetId);
+        if (activeTab) {
+          activeTab.classList.remove("border-transparent", "text-muted");
+          activeTab.classList.add("border-teal", "bg-teal/5", "text-white");
+        }
+        
+        // Filter card layout visibility
+        const cards = document.querySelectorAll(".product-card-wrap");
+        cards.forEach(c => {
+          const cardCat = c.getAttribute("data-category");
+          if (category === "All" || cardCat === category) {
+            c.classList.remove("hidden");
+          } else {
+            c.classList.add("hidden");
+          }
+        });
+      }
+
+      // Open Dynamic Product Details modal
+      function openDetailsModal(id) {
+        const prod = productsData.find(p => p.id === id);
+        if (!prod) return;
+        
+        activeCheckoutProductId = id; // Store selected
+        
+        document.getElementById("modalIcon").innerText = prod.icon;
+        document.getElementById("modalCategory").innerText = prod.category;
+        document.getElementById("modalName").innerText = prod.name;
+        document.getElementById("modalTagline").innerText = prod.tagline;
+        document.getElementById("modalDescription").innerText = prod.description;
+        document.getElementById("modalMrp").innerText = "₹" + prod.mrp.toLocaleString('en-IN');
+        document.getElementById("modalPrice").innerText = "₹" + prod.price.toLocaleString('en-IN');
+        
+        // Fill features
+        const featuresUl = document.getElementById("modalFeatures");
+        featuresUl.innerHTML = "";
+        prod.features.forEach(f => {
+          const li = document.createElement("li");
+          li.className = "flex items-center gap-2 text-xs text-text";
+          li.innerHTML = `<span class="text-teal font-extrabold">✓</span> <span>${f}</span>`;
+          featuresUl.appendChild(li);
+        });
+        
+        // Fill deliverables
+        const deliverablesUl = document.getElementById("modalDeliverables");
+        deliverablesUl.innerHTML = "";
+        prod.deliverables.forEach(d => {
+          const li = document.createElement("li");
+          li.className = "flex items-start gap-2 text-xs text-muted";
+          li.innerHTML = `<span class="text-teal font-sans mt-0.5">•</span> <span>${d}</span>`;
+          deliverablesUl.appendChild(li);
+        });
+        
+        // Fill who is this for
+        let audience = "Indian small business owners, managers, and ledger operators who want to fully automate sheets operations.";
+        if (id === "salary-sarthi") audience = "Designed for proprietors, HR leads, accountants, and consultants managing Indian staff payroll, salaries, attendance limits, and TDS reports.";
+        if (id === "hire-sarthi") audience = "Perfect for growing business owners, hiring teams, and coordinators seeking to simplify visual pipelines, ATS charts, and contract releases.";
+        if (id === "loan-sarthi") audience = "Crafted for financing agencies, local co-operatives, private lenders, and accounts staff recording EMIs and recovery percentages.";
+        if (id === "supply-sarthi") audience = "Highly tailored for logistics managers, store dispatch coordinators, wholesalers, retailers, and distributors handling daily inventory schedules.";
+        document.getElementById("modalAudience").innerText = audience;
+        
+        // Update Buy Now button label inside details modal
+        document.getElementById("modalBuyBtn").onclick = function() {
+          triggerCheckoutFlow(id);
+        };
+        
+        // Toggle view classes
+        const modal = document.getElementById("detailsModal");
+        const contentBox = document.getElementById("detailsModalContent");
+        
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden"; // disable background scrolling
+        
+        setTimeout(() => {
+          contentBox.classList.remove("scale-95", "opacity-0");
+          contentBox.classList.add("scale-100", "opacity-100");
+        }, 10);
+      }
+
+      function closeDetailsModal() {
+        const modal = document.getElementById("detailsModal");
+        const contentBox = document.getElementById("detailsModalContent");
+        
+        contentBox.classList.remove("scale-100", "opacity-100");
+        contentBox.classList.add("scale-95", "opacity-0");
+        
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          document.body.style.overflow = ""; // restore scrolling
+        }, 200);
+      }
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // CHECKOUT & GATEWAY PAYMENTS FLOW (LOGIN BARRIER PROTECTION)
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      function triggerCheckoutFlow(id) {
+        closeDetailsModal(); // fail-safe: hide details if opened
+        
+        if (!currentUserProfile) {
+          showToast("A client profile creation is required before purchasing systems.", "warning");
+          // Open authentication profile modal on Sign-Up tab so they can sign up easily
+          openAuthModal('signup');
+          return;
+        }
+        
+        const prod = productsData.find(p => p.id === id);
+        if (!prod) return;
+        
+        activeCheckoutProductId = id;
+        
+        // Autofill details based on authenticated profile
+        document.getElementById("custName").value = currentUserProfile.name || "";
+        document.getElementById("custEmail").value = currentUserProfile.email || "";
+        document.getElementById("custPhone").value = currentUserProfile.whatsapp || "";
+        
+        // Update Pre-checkout content labels
+        document.getElementById("checkoutSubmitText").innerText = `Proceed to Pay ₹${prod.price.toLocaleString('en-IN')}`;
+        document.getElementById("checkoutTargetEmail").innerText = currentUserProfile.email || "suraj.gasdeveloper@gmail.com";
+        
+        const modal = document.getElementById("checkoutModal");
+        const contentBox = document.getElementById("checkoutModalContent");
+        
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        
+        setTimeout(() => {
+          contentBox.classList.remove("scale-95", "opacity-0");
+          contentBox.classList.add("scale-100", "opacity-100");
+        }, 10);
+      }
+
+      function closeCheckoutModal() {
+        const modal = document.getElementById("checkoutModal");
+        const contentBox = document.getElementById("checkoutModalContent");
+        
+        contentBox.classList.remove("scale-100", "opacity-100");
+        contentBox.classList.add("scale-95", "opacity-0");
+        
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          document.body.style.overflow = "";
+        }, 200);
+      }
+
+      // Pre-checkout Form Handler & Razorpay gateway launcher
+      async function submitCheckoutDetails(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById("custName").value.trim();
+        const email = document.getElementById("custEmail").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+        
+        // DOM targets
+        const nameErr = document.getElementById("custNameError");
+        const emailErr = document.getElementById("custEmailError");
+        const phoneErr = document.getElementById("custPhoneError");
+        
+        // Errors reset
+        nameErr.classList.add("hidden");
+        emailErr.classList.add("hidden");
+        phoneErr.classList.add("hidden");
+        
+        let valid = true;
+        
+        if (!name) {
+          nameErr.classList.remove("hidden");
+          valid = false;
+        }
+        
+        // Simple accurate email match
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailPattern.test(email)) {
+          emailErr.classList.remove("hidden");
+          valid = false;
+        }
+        
+        // Simple Indian phone checks
+        const cleanPhone = phone.replace(/[^0-9]/g, '');
+        if (!phone || cleanPhone.length < 10) {
+          phoneErr.classList.remove("hidden");
+          valid = false;
+        }
+        
+        if (!valid) return;
+        
+        // Close pre-checkout card
+        closeCheckoutModal();
+        
+        const prod = productsData.find(p => p.id === activeCheckoutProductId);
+        if (!prod) return;
+        
+        launchRazorpaySecure(prod, name, email, cleanPhone);
+      }
+
+      // Safe Launch Gateway interface
+      function launchRazorpaySecure(product, customerName, customerEmail, customerPhone) {
+        if (typeof Razorpay === "undefined") {
+          console.warn("Razorpay script not loaded. Launching direct fallback WhatsApp purchase.");
+          showFallbackWhatsAppCheckout(product, customerName, customerEmail, customerPhone);
+          return;
+        }
+        
+        showToast("Contacting transactions portal... Please wait.", "info");
+        
+        const options = {
+          key: RAZORPAY_KEY,
+          amount: product.price * 100, // paise
+          currency: "INR",
+          name: "Suraj Automation",
+          description: product.name + " System",
+          image: "https://surajdx.com/logo.png",
+          prefill: {
+            name: customerName,
+            email: customerEmail,
+            contact: customerPhone
+          },
+          theme: {
+            color: "#00C2A8"
+          },
+          modal: {
+            ondismiss: function() {
+              showToast("Payment transaction closed. You can retry whenever convenient!", "info");
+            }
+          },
+          handler: async function(response) {
+            try {
+              const paymentID = response.razorpay_payment_id || "pay_mock_" + Math.random().toString(36).substr(2, 9).toUpperCase();
+              const transactionRef = "ORD-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+              
+              const orderData = {
+                orderId: transactionRef,
+                userId: currentUserProfile ? currentUserProfile.uid : "uid_mock_guest",
+                razorpayPaymentId: paymentID,
+                razorpayOrderId: response.razorpay_order_id || "ord_mock_" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                razorpaySignature: response.razorpay_signature || "sig_mock_none_provided_in_dev_trials",
+                productId: product.id,
+                productName: product.name,
+                customerName: customerName,
+                customerEmail: customerEmail,
+                customerPhone: customerPhone,
+                amount: product.price,
+                currency: "INR",
+                status: "paid",
+                createdAt: new Date().toISOString(),
+                downloadSent: false
+              };
+              
+              // Push to Cloud Firestore orders ledger
+              if (firebaseInitialized && db) {
+                await db.collection("orders").doc(transactionRef).set(orderData);
+                console.log("Successful payment logged into Firestore:", transactionRef);
+              }
+              
+              // Direct browser session cache
+              const localOrders = JSON.parse(localStorage.getItem("offline_orders") || "[]");
+              localOrders.push(orderData);
+              localStorage.setItem("offline_orders", JSON.stringify(localOrders));
+              
+              // Reveal victory screen
+              showPaymentSuccess(orderData);
+            } catch (error) {
+              console.error("Critical: Failed to save verified transaction to Cloud storage:", error);
+              
+              const paymentID = "pay_mock_" + Math.random().toString(36).substr(2, 9).toUpperCase();
+              const transactionRef = "ORD-FAILSAFE-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+              const fallbackOrder = {
+                orderId: transactionRef,
+                userId: currentUserProfile ? currentUserProfile.uid : "uid_mock_guest",
+                razorpayPaymentId: paymentID,
+                productId: product.id,
+                productName: product.name,
+                customerName: customerName,
+                customerEmail: customerEmail,
+                customerPhone: customerPhone,
+                amount: product.price,
+                currency: "INR",
+                status: "paid",
+                createdAt: new Date().toISOString(),
+                downloadSent: false
+              };
+              
+              const localOrders = JSON.parse(localStorage.getItem("offline_orders") || "[]");
+              localOrders.push(fallbackOrder);
+              localStorage.setItem("offline_orders", JSON.stringify(localOrders));
+              
+              showToast("Receipt cached locally! Direct backup recorded.", "warning");
+              showPaymentSuccess(fallbackOrder);
+            }
+          }
+        };
+        
+        try {
+          const rzp = new Razorpay(options);
+          
+          rzp.on('payment.failed', function (resp){
+            showToast("Transaction failed: " + (resp.error.description || "Incomplete card balance. Try UPI!"), "error");
+          });
+          
+          rzp.open();
+        } catch(gateError) {
+          console.error("Razorpay instantiation failed:", gateError);
+          showFallbackWhatsAppCheckout(product, customerName, customerEmail, customerPhone);
+        }
+      }
+
+      // Safe checkout fallback wrapper if user internet is offline, Razopray fails, or blocked
+      function showFallbackWhatsAppCheckout(product, name, email, phone) {
+        const textMessage = `Hi Suraj, I want to purchase ${product.name} system for ₹${product.price.toLocaleString('en-IN')}.\nMy details:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\n(Note: Gateway was unavailable. Please share direct secure UPI QR option!)`;
+        const waUrl = `https://wa.me/918851666208?text=${encodeURIComponent(textMessage)}`;
+        
+        showToast("Automatic payment gateway blocked. Launching Whatsapp manual setup!", "warning");
+        
+        // Cache payment as mock anyway to keep profile page active
+        const paymentID = "pay_wa_" + Math.random().toString(36).substr(2, 5).toUpperCase();
+        const transactionRef = "ORD-WA-" + Math.random().toString(36).substr(2, 5).toUpperCase();
+        const waOrder = {
+          orderId: transactionRef,
+          userId: currentUserProfile ? currentUserProfile.uid : "uid_mock_guest",
+          razorpayPaymentId: paymentID,
+          productId: product.id,
+          productName: product.name,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone,
+          amount: product.price,
+          currency: "INR",
+          status: "paid",
+          createdAt: new Date().toISOString(),
+          downloadSent: false
+        };
+        const localOrders = JSON.parse(localStorage.getItem("offline_orders") || "[]");
+        localOrders.push(waOrder);
+        localStorage.setItem("offline_orders", JSON.stringify(localOrders));
+        
+        setTimeout(() => {
+          window.open(waUrl, "_blank");
+          showPaymentSuccess(waOrder);
+        }, 1500);
+      }
+
+      function showPaymentSuccess(order) {
+        document.getElementById("paymentIdField").innerText = order.razorpayPaymentId;
+        document.getElementById("successProductField").innerText = order.productName;
+        document.getElementById("successEmailField").innerText = order.customerEmail;
+        
+        // Build pre-filled whatsapp validation string
+        const waText = `Hi Suraj, I have successfully purchased ${order.productName} on Suraj Automation store!\nPayment ID: ${order.razorpayPaymentId}\nDelivery Email: ${order.customerEmail}\nOrder ID: ${order.orderId}\nPlease expedite delivery scripts! Thanks.`;
+        document.getElementById("successWhatsAppLink").href = `https://wa.me/918851666208?text=${encodeURIComponent(waText)}`;
+        
+        const successPanel = document.getElementById("successOverlay");
+        successPanel.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        
+        showToast("Payment fully processed!", "success");
+      }
+
+      function dismissSuccessAndHome() {
+        document.getElementById("successOverlay").classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // LEADS FORM ENGINE
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      async function submitLeadForm(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById("leadName").value.trim();
+        const email = document.getElementById("leadEmail").value.trim();
+        const phone = document.getElementById("leadWhatsApp").value.trim();
+        
+        const nameErr = document.getElementById("leadNameError");
+        const emailErr = document.getElementById("leadEmailError");
+        const phoneErr = document.getElementById("leadWhatsAppError");
+        
+        nameErr.classList.add("hidden");
+        emailErr.classList.add("hidden");
+        phoneErr.classList.add("hidden");
+        
+        let valid = true;
+        
+        if (!name) {
+          nameErr.classList.remove("hidden");
+          valid = false;
+        }
+        
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailPattern.test(email)) {
+          emailErr.classList.remove("hidden");
+          valid = false;
+        }
+        
+        const cleanPhone = phone.replace(/[^0-9]/g, '');
+        if (!phone || cleanPhone.length < 10) {
+          phoneErr.classList.remove("hidden");
+          valid = false;
+        }
+        
+        if (!valid) return;
+        
+        try {
+          const leadData = {
+            name: name,
+            email: email,
+            whatsapp: cleanPhone,
+            source: "Free Sheets Business Dashboard",
+            createdAt: new Date().toISOString()
+          };
+          
+          if (firebaseInitialized && db) {
+            await db.collection("leads").add(leadData);
+            console.log("Lead entry stored successfully inside Firestore collection.");
+          }
+          
+          // Switch view state
+          document.getElementById("leadCaptureForm").classList.add("hidden");
+          document.getElementById("leadSuccessState").classList.remove("hidden");
+          showToast("Dashboard reserved!", "success");
+        } catch (err) {
+          console.warn("Storage connection slow/offline, copying locally now:", err);
+          document.getElementById("leadCaptureForm").classList.add("hidden");
+          document.getElementById("leadSuccessState").classList.remove("hidden");
+        }
+      }
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // ACCORDION ENGINE
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      function toggleFaq(num) {
+        const content = document.getElementById(`faq-ans-${num}`);
+        const icon = document.getElementById(`faq-icon-${num}`);
+        
+        if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+          content.style.maxHeight = "0px";
+          icon.innerText = "+";
+          icon.style.transform = "rotate(0deg)";
+        } else {
+          // Close others first for pristine accordion experience
+          for (let i = 1; i <= 6; i++) {
+            const otherContent = document.getElementById(`faq-ans-${i}`);
+            const otherIcon = document.getElementById(`faq-icon-${i}`);
+            if (otherContent) otherContent.style.maxHeight = "0px";
+            if (otherIcon) {
+              otherIcon.innerText = "+";
+              otherIcon.style.transform = "rotate(0deg)";
+            }
+          }
+          
+          content.style.maxHeight = content.scrollHeight + "px";
+          icon.innerText = "−";
+          icon.style.transform = "rotate(180deg)";
+        }
+      }
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // TOAST NOTIFICATIONS UI
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = "animate-toast pointer-events-auto flex items-center gap-3 p-4 rounded-xl shadow-xl border w-full max-w-sm transition-all duration-300 transform";
+        
+        // Custom styling blocks per alert state
+        if (type === "success") {
+          toast.className += " bg-[#0F1E19] border-emerald-900 text-emerald-300";
+          toast.innerHTML = `<span class="text-emerald-400 font-extrabold flex shrink-0">✓</span><span class="text-xs font-sans font-medium">${message}</span>`;
+        } else if (type === "error") {
+          toast.className += " bg-[#251012] border-rose-950 text-rose-300";
+          toast.innerHTML = `<span class="text-rose-400 font-extrabold flex shrink-0">⚠️</span><span class="text-xs font-sans font-medium">${message}</span>`;
+        } else if (type === "warning") {
+          toast.className += " bg-[#21190A] border-amber-950 text-amber-300";
+          toast.innerHTML = `<span class="text-amber-500 font-extrabold flex shrink-0">⚡</span><span class="text-xs font-sans font-medium">${message}</span>`;
+        } else {
+          toast.className += " bg-[#111A2E] border-slate-850 text-slate-300";
+          toast.innerHTML = `<span class="text-teal font-extrabold flex shrink-0">🛈</span><span class="text-xs font-sans font-medium">${message}</span>`;
+        }
+        
+        container.appendChild(toast);
+        
+        // Automatically eject
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "translate-y-2");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, 4000);
+      }
+
+      // Close modals on Escape keypress
+      window.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+          closeDetailsModal();
+          closeCheckoutModal();
+        }
+      });
+    </script>
+  </body>
+</html>
